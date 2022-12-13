@@ -15,22 +15,21 @@ large_font = pygame.font.SysFont(None, 72)
 small_font = pygame.font.SysFont(None, 36)
 
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("지뢰찾기  High_score : " + high_score + "sec")
 difficulty1 = 2
 
 clock = pygame.time.Clock()
 
 
-start_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\starticon.png")
-quit_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\quiticon.png")
-click_start_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\clickedStartIcon.png")
-click_quit_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\clickedQuitIcon.png")
-easy_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\Easy.png")
-normal_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\Normal.png")
-hard_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\Hard.png")
-click_easy_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\click_easy.png")
-click_normal_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\click_normal.png")
-click_hard_image = pygame.image.load(r"C:\coding\python\학교\오픈소스 SW\images\click_hard.png")
+start_image = pygame.image.load(r"images\starticon.png")
+quit_image = pygame.image.load(r"images\quiticon.png")
+click_start_image = pygame.image.load(r"images\clickedStartIcon.png")
+click_quit_image = pygame.image.load(r"images\clickedQuitIcon.png")
+easy_image = pygame.image.load(r"images\Easy.png")
+normal_image = pygame.image.load(r"images\Normal.png")
+hard_image = pygame.image.load(r"images\Hard.png")
+click_easy_image = pygame.image.load(r"images\click_easy.png")
+click_normal_image = pygame.image.load(r"images\click_normal.png")
+click_hard_image = pygame.image.load(r"images\click_hard.png")
 start_image = pygame.transform.scale(start_image, (240,80))
 quit_image = pygame.transform.scale(quit_image, (240,80))
 click_start_image = pygame.transform.scale(click_start_image, (240,80))
@@ -44,6 +43,7 @@ click_hard_image = pygame.transform.scale(click_hard_image, (120,40))
 temp1_image = easy_image
 temp2_image = normal_image
 temp3_image = hard_image
+
 class Button:
     def __init__(self, img_in, x, y, width, height, img_act, x_act, y_act, action = None):
         mouse = pygame.mouse.get_pos()
@@ -85,6 +85,8 @@ def select_difficulty():
                 sys.exit()
         
         screen.fill(BLACK)
+        high_score_image = small_font.render("High_score : " + high_score + "sec", True, RED)
+        screen.blit(high_score_image, high_score_image.get_rect(centerx= 650, centery = 20))
         map_difficulty_image = large_font.render('Map', True, WHITE)
         screen.blit(map_difficulty_image, map_difficulty_image.get_rect(centerx= 250, centery= 80))
         mine_difficulty_image = large_font.render('Mine', True, WHITE)
@@ -203,12 +205,33 @@ def runGame():
     
     global grid
     grid = [[{'mine': False, 'open': False, 'mine_count_around': 0, 'flag': False} for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT)]
-    MINE_COUNT = 15 * difficulty1 * difficulty2
-    #Map_size : {8*12 = 96, 16* 12 = 192, 32 * 12 = 384}
+    
+    if difficulty1 == 1:
+        if difficulty2 == 1:
+            MINE_COUNT = 10
+        elif difficulty2 == 2:
+            MINE_COUNT = 20
+        elif difficulty2 == 3:
+            MINE_COUNT = 30
+    elif difficulty1 == 2:
+        if difficulty2 == 1:
+            MINE_COUNT = 40
+        elif difficulty2 == 2:
+            MINE_COUNT = 80
+        elif difficulty2 == 3:
+            MINE_COUNT = 120
+    elif difficulty1 == 3:
+        if difficulty2 == 1:
+            MINE_COUNT = 99
+        elif difficulty2 == 2:
+            MINE_COUNT = 150
+        elif difficulty2 == 3:
+            MINE_COUNT = 200
+    #Map_size : {9 * 9 = 81, 16 * 16 = 256, 30 * 16 = 480}
     #Map : {Mine}
-    #easy: {15, 30, 45}
-    #normal: {30, 60, 120}
-    #hard: {45, 90, 135}
+    #easy: {10, 20, 30}
+    #normal: {40, 80, 120}
+    #hard: {99, 150, 200}
     for _ in range(MINE_COUNT):
         while True:
             column_index = random.randint(0, COLUMN_COUNT - 1)
@@ -262,13 +285,13 @@ def runGame():
                     mine_count_around_image = small_font.render('{}'.format(tile['mine_count_around']), True, YELLOW)
                     screen.blit(mine_count_around_image, mine_count_around_image.get_rect(centerx=column_index * CELL_SIZE + CELL_SIZE // 2, centery=row_index * CELL_SIZE + CELL_SIZE // 2))
                 if tile['mine']:
-                    mine_image = pygame.image.load("C:\coding\python\학교\오픈소스 SW\images\mine.png").convert()
+                    mine_image = pygame.image.load(r"images\mine.png").convert()
                     mine_image = pygame.transform.scale(mine_image, (CELL_SIZE,CELL_SIZE))
                     screen.blit(mine_image, mine_image.get_rect(centerx=column_index * CELL_SIZE + CELL_SIZE // 2, centery=row_index * CELL_SIZE + CELL_SIZE // 2)) #지뢰 설치
                 if not tile['open']:
                     pygame.draw.rect(screen, GRAY, pygame.Rect(column_index * CELL_SIZE, row_index * CELL_SIZE, CELL_SIZE, CELL_SIZE)) #커버
                 if tile['flag']:
-                    flag_image = pygame.image.load("C:\coding\python\학교\오픈소스 SW\images/flag.png").convert()
+                    flag_image = pygame.image.load(r"images/flag.png").convert()
                     flag_image = pygame.transform.scale(flag_image, (CELL_SIZE,CELL_SIZE))
                     screen.blit(flag_image, (column_index * CELL_SIZE, row_index * CELL_SIZE))
                 pygame.draw.rect(screen, WHITE, pygame.Rect(column_index * CELL_SIZE, row_index * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
@@ -291,7 +314,7 @@ def runGame():
                     row_index = j
                     tile = grid[row_index][column_index]
                     if tile['mine']:
-                        mine_image = pygame.image.load("C:\coding\python\학교\오픈소스 SW\images\mine.png").convert()
+                        mine_image = pygame.image.load(r"images\mine.png").convert()
                         mine_image = pygame.transform.scale(mine_image, (CELL_SIZE,CELL_SIZE))
                         screen.blit(mine_image, mine_image.get_rect(centerx=column_index * CELL_SIZE + CELL_SIZE // 2, centery=row_index * CELL_SIZE + CELL_SIZE // 2))
                     pygame.display.update()
@@ -305,7 +328,6 @@ def runGame():
             current_time = end - start
             if float(high_score) > current_time:
                 high_score = str(round(current_time,2))
-                pygame.display.set_caption("지뢰찾기  High_score : " + high_score + "sec")
                 pygame.display.update()
             pygame.time.delay(2000)
             pygame.init()
